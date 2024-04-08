@@ -1,5 +1,6 @@
+'use client'
 import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
 import logo from '../../../public/images/Empty State.png'
 import building from '../../../public/images/Placeholder Image.png'
 import building2 from '../../../public/images/Placeholder Image (1).png'
@@ -7,8 +8,53 @@ import building3 from '../../../public/images/Placeholder Image (2).png'
 import man from '../../../public/images/Ellipse 1.png'
 
 const Search = () => {
+    const [showSelect,setShowSelect] = useState<boolean>(true)
     return (
-        <main className='w-full min-h-screen py-4 dark:bg-[#171717] px-4 gap-y-10'>
+        <main className='w-full min-h-screen py-6 dark:bg-[#171717] px-4 gap-y-10'>
+            <div className="fixed w-full h-full flex justify-center items-center left-0 top-0 bg-[#1d3045f4]">
+                <div className='w-[90%] h-auto gap-y-6 flex flex-col rounded-md bg-white py-5 px-4'>
+                    <h2 className='text-center text-xl'>Review Location</h2>
+                    <h2 className='font-semibold text-center text-xl'>Bonny and Clyde Street, Lagos.</h2>
+                    <div>
+                        <div
+                            onClick={() => alert('')}
+                            className="custom-select flex items-center justify-between outline-none bg-[#F3F7FE]"
+                            style={{ width: "100%", padding: '10px 10px', color: 'gray', border: '1px solid #eef5ff' }}
+                        >
+                        <span>Select Amenities</span>
+                        <span className='fa-solid fa-angle-down'></span>
+                        </div>
+                        {
+                            showSelect && (
+                                <div>
+
+                                </div>
+                            )
+                        }
+                    
+                    </div>
+                    <div className='font-bold'>
+                        Rate location
+                    </div>
+                    <div className='flex gap-x-2'>
+                        {
+                            [...Array(5)].map((x, i) => (
+                                <i className='fa-solid fa-star text-yellow-400 text-xl' key={i}></i>
+                            ))
+                        }
+
+                    </div>
+                    <div>
+                        Write Review
+                    </div>
+                    <div>
+                        <textarea defaultValue={'Major roads here are motorable and the power supply is good. For those who work in Lekki, living in Ikota is a plus because they will  experience little or no traffic to and from work. The neighbourhood is serene and highly accessible.'} name="" id="" cols={30} rows={8} className='w-full px-3 py-3 outline-none border-[1px] rounded-md'></textarea>
+                    </div>
+                    <div>
+                        <input type="checkbox" className='mr-2' /> Post as Anonymous
+                    </div>
+                </div>
+            </div>
             <div className="flex flex-col gap-y-5 ">
                 <div className=''>
                     <div className='w-full mb-4'>
@@ -149,6 +195,10 @@ const Search = () => {
                                     </span>
                                 </div>
 
+                            </div>
+                            <div className='flex mt-5 items-center border-[1px] py-2 px-2'>
+                                <textarea className='w-[75%] outline-none' name="" id="" cols={10} rows={3}></textarea>
+                                <button type="submit" className='w-[25%] h-12 text-white rounded-md bg-[#3366FF] text-sm'>POST</button>
                             </div>
                         </div>
                     ))

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ChangeEvent, FormEvent } from "react";
+import { createSupabaseServerClient } from "./supabase";
 
 export class Helpers {
     static formatBytes(bytes: number, decimals = 2) {
@@ -12,6 +13,14 @@ export class Helpers {
         const i = Math.floor(Math.log(bytes) / Math.log(k));
 
         return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+    }
+    static fetchSupabaseProducts = async () => {
+        const supabase = await createSupabaseServerClient()
+        const { data: products, error } = await supabase.from("reviews").select();
+        if (error) {
+            console.log(error.message)
+        }
+        return products
     }
     static toBase64 = (file: File) =>
         new Promise((resolve, reject) => {
@@ -53,7 +62,7 @@ export class Helpers {
 
         const sizes = parseFloat(String(files[0].size / (1024 * 1024))).toFixed(2);
         setSize(this.formatBytes(files[0].size));
-       
+
         setCurrFile(files[0].name + `, ${size}`);
         if (Number(sizes) > 2) {
             enqueueSnackbar("Max file size is 2MB", {
@@ -82,7 +91,7 @@ export class Helpers {
         };
 
         setUserFile(files[0]);
-       
+
 
     };
     static validateSignUpForm = async (

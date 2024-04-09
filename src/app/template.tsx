@@ -1,18 +1,15 @@
 import { ReactNode } from "react";
-import Header from "@/components/Header";
-import Script from "next/script";
+import AppLayout from "@/components/AppLayout";
+import { readUserSession } from "@/helpers/supabase";
 
 
 const Template = async ({ children }: { children: ReactNode }) => {
+    const user = await readUserSession()
+    const getSession = user.data.user?.user_metadata ?? null
     return (
-        <>
-            <Header />
+        <AppLayout session={getSession}>
             {children}
-            <Script
-                src="https://kit.fontawesome.com/4ef8c63dd7.js"
-                crossOrigin="anonymous"
-            />
-        </>
+        </AppLayout>
     )
 }
 export default Template;

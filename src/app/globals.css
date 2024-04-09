@@ -121,7 +121,9 @@ a {
 .share-icon::before {
   color: transparent;
 }
-
+.trans {
+  transition: all 0.5s;
+}
 .share-icon::after {
   background: linear-gradient(45deg, #007BFF, #6610f2);
   -webkit-background-clip: text;

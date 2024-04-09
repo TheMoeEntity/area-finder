@@ -1,8 +1,90 @@
 import axios from "axios";
-import { FormEvent } from "react";
+import { ChangeEvent, FormEvent } from "react";
 
 export class Helpers {
+    static formatBytes(bytes: number, decimals = 2) {
+        if (!+bytes) return "0 Bytes";
 
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+    }
+    static toBase64 = (file: File) =>
+        new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+        });
+    static handleFileSelected = async (
+        e: ChangeEvent<HTMLInputElement>,
+        enqueueSnackbar: any,
+        setSize: any,
+        setUserFile: any,
+        setCurrFile: any,
+        size: string
+    ) => {
+        const files = (e.target as HTMLInputElement).files;
+
+        if (!files) return;
+        const fileType = files[0].type;
+        console.log(fileType);
+
+        const acceptedFileTypes: string[] = [
+            "application/pdf",
+            "image/png",
+            "image/jpeg",
+            "image/png",
+        ];
+        console.log(files[0].webkitRelativePath)
+        if (!acceptedFileTypes.includes(fileType)) {
+            enqueueSnackbar(
+                "File type not supported. Kindly upload a valid pdf, jpeg or jpg",
+                {
+                    variant: "error",
+                }
+            );
+            return;
+        }
+
+        const sizes = parseFloat(String(files[0].size / (1024 * 1024))).toFixed(2);
+        setSize(this.formatBytes(files[0].size));
+       
+        setCurrFile(files[0].name + `, ${size}`);
+        if (Number(sizes) > 2) {
+            enqueueSnackbar("Max file size is 2MB", {
+                variant: "error",
+            });
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(files[0]);
+        reader.onload = () => {
+            const image = new Image();
+            // image.src = (e.target as HTMLInputElement).files[0]
+            image.onload = () => {
+                const {
+                    height,
+                    width
+                } = image;
+                if (height > 4 || width > 800) {
+                    alert("Height must not exceed 400px. Width must not exceed 800px");
+                    return false;
+                }
+                alert("Uploaded image has valid Height and Width.");
+                return true;
+            };
+        };
+
+        setUserFile(files[0]);
+       
+
+    };
     static validateSignUpForm = async (
         e: FormEvent<HTMLFormElement>,
         setStatus: any,
@@ -73,7 +155,7 @@ export class Helpers {
             setTimeout(() => {
                 const resetForm = e.target as HTMLFormElement;
                 resetForm.reset();
-                push('/');
+                location.href = '/'
             }, 3000);
         } catch (error) {
             setStatus("...Error creating user");

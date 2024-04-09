@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import logo from '../../../public/images/ic_logo.png'
 import dark from '../../../public/images/ic_logo-dark.png'
@@ -14,13 +14,29 @@ import { useSnackbar } from 'notistack'
 
 const Header = ({ getSession }: { getSession: UserMetadata | null }) => {
     const pathname = usePathname()
+    const inputFile = useRef<HTMLInputElement | null>(null);
+    const [userFile, setUserFile] = useState<File | null>(null);
+    const openFiles = () => {
+        if (inputFile.current) inputFile.current.click();
+    };
     const { enqueueSnackbar } = useSnackbar()
     const [profile, setProfile] = React.useState(false)
     const [dashboard, setDashboard] = useState(false)
     const [reviews, setReviews] = useState(false)
+    const [currFile, setCurrFile] = useState<string>("No file selected*");
+    const [size, setSize] = useState("");
     const [isEditing, setIsEditing] = useState(false)
     const [status, setStatus] = useState("save changes")
     const [showSelect, setShowSelect] = useState<boolean>(false)
+    useEffect(() => {
+        if (currFile !== "No file selected*") {
+            const isFile = !userFile ? "Selected file size:" : `${userFile.name}, `;
+            setCurrFile(isFile + ` ${size}`);
+        }
+    }, [size]);
+    const handleupload = () => {
+
+    }
     return (
         <div className='flex px-5 py-2 items-center dark:bg-[#171717] justify-between'>
             <div className={'fixed duration-[0.5s] transition-all ease-in overflow-y-scroll top-10 px-3 py-5  w-full h-full flex flex-col gap-y-5 z-10 bg-[#FAFCFD] ' + (dashboard ? 'right-0' : 'right-[-100%]')}>
@@ -47,10 +63,18 @@ const Header = ({ getSession }: { getSession: UserMetadata | null }) => {
                             />
                         </div>
                         <div className='text-center'>
-                            <button className='text-[#3366FF]'>Click to upload</button> or drag and drop
+                            <button onClick={() => openFiles()} className='text-[#3366FF]'>Click to upload</button> or drag and drop
                         </div>
+                        <input onChange={(e) =>
+                            Helpers.handleFileSelected(
+                                e, enqueueSnackbar,setSize,setUserFile,setCurrFile,size
+                            )
+                        } ref={inputFile} type="file" name="" id="" className='hidden' />
                         <div className='text-gray-400 text-center'>
                             SVG, PNG, JPG or GIF (max. 800x400px)
+                        </div>
+                        <div>
+                            {currFile}
                         </div>
                     </div>
                 </div>
@@ -75,12 +99,12 @@ const Header = ({ getSession }: { getSession: UserMetadata | null }) => {
                     </div>
                     <div className=''>
                         <div className='w-full'>
-                            <input placeholder="phone" type="phone" className="py-4 dark:bg-[#242428] dark:placeholder:text-[white] dark:border-none rounded-md  bg-[#D4DCF1] placeholder:text-black px-3 w-full border-gray-300 border-[1px] text-sm" />
+                            <input placeholder="phone" type="phone" defaultValue={getSession?.phone} className="py-4 dark:bg-[#242428] dark:placeholder:text-[white] dark:border-none rounded-md  bg-[#D4DCF1] placeholder:text-black px-3 w-full border-gray-300 border-[1px] text-sm" />
                         </div>
                     </div>
                     <div className=''>
                         <div className='w-full'>
-                            <input placeholder="location" type="text" className="py-4 dark:bg-[#242428] dark:placeholder:text-[white] dark:border-none rounded-md  bg-[#D4DCF1] placeholder:text-black px-3 w-full border-gray-300 border-[1px] text-sm" />
+                            <input placeholder="location" type="text" defaultValue={getSession?.location} className="py-4 dark:bg-[#242428] dark:placeholder:text-[white] dark:border-none rounded-md  bg-[#D4DCF1] placeholder:text-black px-3 w-full border-gray-300 border-[1px] text-sm" />
                         </div>
                     </div>
 
